@@ -1,0 +1,20 @@
+# 构建产物
+/hr-cli
+/bin/
+/dist/
+
+# 测试与覆盖率
+*.out
+*.test
+
+# IDE（已存在 .idea/，按需保留或忽略）
+.idea/
+
+# Go 工作目录临时文件
+vendor/
+/.codegraph/
+/.serena/
+/openspec/
+
+# 项目配置(本地环境,base-url 等)
+/.hr-cli.json

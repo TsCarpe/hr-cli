@@ -1,0 +1,1271 @@
+{
+  "version": "2026-06-26",
+  "services": [
+    {
+      "name": "course",
+      "title": "课程",
+      "basePath": "/listen",
+      "methods": {
+        "add": {
+          "name": "add",
+          "path": "/v1/course/invite/add",
+          "httpMethod": "POST",
+          "description": "添加听评课邀请",
+          "risk": "write",
+          "requiresAuth": true,
+          "requestSchema": {
+            "type": "object",
+            "properties": {
+              "schoolId": {
+                "type": "string",
+                "description": "学校id"
+              },
+              "outsideSchoolId": {
+                "type": "string",
+                "description": "校外老师学校id"
+              },
+              "outsideSchoolName": {
+                "type": "string",
+                "description": "校外老师学校名称"
+              },
+              "campusId": {
+                "type": "string",
+                "description": "校区id"
+              },
+              "teachGroupId": {
+                "type": "string",
+                "description": "授课老师所在教研组id"
+              },
+              "currentUserTeachGroupId": {
+                "type": "string",
+                "description": "当前用户所在教研组id"
+              },
+              "teacherId": {
+                "type": "string",
+                "description": "授课老师id,校外教师可以为空"
+              },
+              "teacherName": {
+                "type": "string",
+                "description": "授课老师名称"
+              },
+              "isOutside": {
+                "type": "integer",
+                "description": "是否校外教师(1-是,0-不是)"
+              },
+              "name": {
+                "type": "string",
+                "description": "课程名称"
+              },
+              "time": {
+                "type": "string",
+                "description": "授课时间"
+              },
+              "node": {
+                "type": "integer",
+                "description": "授课节次"
+              },
+              "courseTagId": {
+                "type": "string",
+                "description": "课程标签id"
+              },
+              "className": {
+                "type": "string",
+                "description": "授课班级名称"
+              },
+              "addr": {
+                "type": "string",
+                "description": "授课地址"
+              },
+              "listenType": {
+                "type": "string",
+                "description": "听课方式",
+                "enum": [
+                  "select",
+                  "appointment",
+                  "other"
+                ],
+                "enumLabels": [
+                  "选人",
+                  "预约",
+                  "其他"
+                ]
+              },
+              "appointmentRange": {
+                "type": "string",
+                "description": "预约范围",
+                "enum": [
+                  "all",
+                  "teach_group",
+                  "prepare_group"
+                ],
+                "enumLabels": [
+                  "全校",
+                  "教研组",
+                  "备课组"
+                ]
+              },
+              "courseInviteMemberAddReqList": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "课程邀请人list"
+              },
+              "courseInviteGroupAddReqList": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "课程预约分组范围list"
+              },
+              "resourceList": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "pubResourceName": {
+                      "type": "string",
+                      "description": "资源名称"
+                    },
+                    "pubResourceUrl": {
+                      "type": "string",
+                      "description": "资源url"
+                    },
+                    "pubResourceFormat": {
+                      "type": "string",
+                      "description": "资源格式"
+                    },
+                    "source": {
+                      "type": "integer",
+                      "description": "来源(0-本地上传, 3-个人复备)"
+                    },
+                    "relationId": {
+                      "type": "string",
+                      "description": "关联id,来源为个人复备时必传teachPreparePlanResourceId"
+                    },
+                    "pubResourceId": {
+                      "type": "string",
+                      "description": "资源id,来源为个人复备时必传"
+                    }
+                  },
+                  "required": [
+                    "pubResourceName",
+                    "pubResourceUrl",
+                    "pubResourceFormat",
+                    "source",
+                    "pubResourceId"
+                  ]
+                },
+                "description": "课程资料"
+              },
+              "commentPaperId": {
+                "type": "string",
+                "description": "评课量表id"
+              },
+              "commentPaperName": {
+                "type": "string",
+                "description": "评课量表名称(显示用,如\"通用教师评课表\")"
+              },
+              "teachPlanId": {
+                "type": "string",
+                "description": "教学计划id(可选,通常空字符串)"
+              },
+              "nodeDisplayName": {
+                "type": "string",
+                "description": "节次显示名(如\"第一节\")"
+              },
+              "saasSchoolId": {
+                "type": "string",
+                "description": "saas学校id(通常与 schoolId 相同)"
+              },
+              "saasCampusId": {
+                "type": "string",
+                "description": "saas校区id(通常与 campusId 相同)"
+              }
+            },
+            "required": [
+              "schoolId",
+              "campusId",
+              "teacherName",
+              "isOutside",
+              "name",
+              "time",
+              "node",
+              "courseTagId",
+              "className",
+              "addr",
+              "listenType",
+              "courseInviteMemberAddReqList",
+              "courseInviteGroupAddReqList",
+              "currentUserTeachGroupId",
+              "commentPaperId"
+            ]
+          },
+          "responseSchema": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean",
+                "description": "是否成功"
+              },
+              "status": {
+                "type": "integer",
+                "description": "返回code码(200成功, 400一般类异常, 401登录失败)"
+              },
+              "message": {
+                "type": "string",
+                "description": "返回描述信息"
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "courseInviteId": {
+                    "type": "string",
+                    "description": "课程邀请id"
+                  },
+                  "courseInviteCode": {
+                    "type": "string",
+                    "description": "课程邀请码"
+                  },
+                  "courseInfoId": {
+                    "type": "string",
+                    "description": "课程id"
+                  }
+                },
+                "required": [
+                  "courseInviteId",
+                  "courseInviteCode",
+                  "courseInfoId"
+                ]
+              }
+            },
+            "required": [
+              "success",
+              "status",
+              "message",
+              "data"
+            ]
+          }
+        },
+        "coursetag_get_lists": {
+          "name": "coursetag_get_lists",
+          "path": "/v1/coursetag/get_lists",
+          "httpMethod": "POST",
+          "description": "查询课程类型(课型)列表",
+          "risk": "read",
+          "requiresAuth": true,
+          "requestSchema": {
+            "type": "object",
+            "properties": {
+              "schoolId": {
+                "type": "string",
+                "description": "学校id"
+              },
+              "campusId": {
+                "type": "string",
+                "description": "校区id"
+              },
+              "customCampusId": {
+                "type": "string",
+                "description": "定制校区id(可选,一般和 campusId 相同)"
+              }
+            },
+            "required": [
+              "schoolId",
+              "campusId"
+            ]
+          },
+          "responseSchema": {
+            "type": "object",
+            "properties": {
+              "courseTagList": {
+                "type": "array",
+                "description": "课型列表",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "courseTagId": {
+                      "type": "string",
+                      "description": "课型id"
+                    },
+                    "courseTagName": {
+                      "type": "string",
+                      "description": "课型名称"
+                    },
+                    "isPublic": {
+                      "type": "boolean",
+                      "description": "是否公开课"
+                    },
+                    "creator": {
+                      "type": "string",
+                      "description": "创建人id"
+                    },
+                    "isCanDel": {
+                      "type": "boolean",
+                      "description": "是否可删除"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "coursepaper_get_suit_lists": {
+          "name": "coursepaper_get_suit_lists",
+          "path": "/v1/coursepaper/get_suit_lists",
+          "httpMethod": "POST",
+          "description": "查询适用评课量表列表(由课型 + 教研组决定推荐)",
+          "risk": "read",
+          "requiresAuth": true,
+          "requestSchema": {
+            "type": "object",
+            "properties": {
+              "schoolId": {
+                "type": "string",
+                "description": "学校id"
+              },
+              "campusId": {
+                "type": "string",
+                "description": "校区id"
+              },
+              "courseTagId": {
+                "type": "string",
+                "description": "课程标签id(决定推荐量表)"
+              },
+              "customCampusId": {
+                "type": "string",
+                "description": "定制校区id(可选)"
+              },
+              "teachGroupId": {
+                "type": "string",
+                "description": "教研组id(可选,精确推荐)"
+              }
+            },
+            "required": [
+              "schoolId",
+              "campusId",
+              "courseTagId"
+            ]
+          },
+          "responseSchema": {
+            "type": "object",
+            "properties": {
+              "commentPaperList": {
+                "type": "array",
+                "description": "量表列表",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "commentPaperId": {
+                      "type": "string",
+                      "description": "量表id"
+                    },
+                    "commentPaperName": {
+                      "type": "string",
+                      "description": "量表名称"
+                    },
+                    "applyType": {
+                      "type": "string",
+                      "description": "应用类型",
+                      "enum": [
+                        "general",
+                        "sys"
+                      ],
+                      "enumLabels": [
+                        "普通",
+                        "系统通用"
+                      ]
+                    },
+                    "creator": {
+                      "type": "string",
+                      "description": "创建人id"
+                    },
+                    "gmtCreated": {
+                      "type": "string",
+                      "description": "创建时间"
+                    },
+                    "bindTypes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "绑定类型 teachGroup|教研组 common|通用 campus|校区"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "course_node_get_lists": {
+          "name": "course_node_get_lists",
+          "path": "/v1/course/node/get_lists",
+          "httpMethod": "POST",
+          "description": "查询课程节次列表(第一节、第二节...)",
+          "risk": "read",
+          "requiresAuth": true,
+          "requestSchema": {
+            "type": "object",
+            "properties": {
+              "schoolId": {
+                "type": "string",
+                "description": "学校id"
+              },
+              "campusId": {
+                "type": "string",
+                "description": "校区id"
+              }
+            },
+            "required": [
+              "schoolId",
+              "campusId"
+            ]
+          },
+          "responseSchema": {
+            "type": "object",
+            "description": "节次列表(含早读/正课/晚自习)",
+            "properties": {
+              "nodeList": {
+                "type": "array",
+                "description": "节次数组",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "integer",
+                      "description": "节次key(1-15)"
+                    },
+                    "displayName": {
+                      "type": "string",
+                      "description": "显示名"
+                    },
+                    "sort": {
+                      "type": "integer",
+                      "description": "排序"
+                    },
+                    "startTime": {
+                      "type": "string",
+                      "description": "开始时间"
+                    },
+                    "endTime": {
+                      "type": "string",
+                      "description": "结束时间"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "course_get_lists": {
+          "name": "course_get_lists",
+          "path": "/v1/course/listen/record/course_get_lists",
+          "httpMethod": "POST",
+          "description": "查我讲的课(我作为授课老师,被评的课,强制按当前用户=授课老师过滤,分页)",
+          "risk": "read",
+          "requiresAuth": true,
+          "requestSchema": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer",
+                "description": "页码,从 1 开始"
+              },
+              "pageSize": {
+                "type": "integer",
+                "description": "每页条数"
+              },
+              "schoolId": {
+                "type": "string",
+                "description": "学校 id"
+              },
+              "campusId": {
+                "type": "string",
+                "description": "校区 id(必填但 Business 层强制清空,实际跨校区查全部自己的授课)"
+              },
+              "courseTagIdList": {
+                "type": "array",
+                "description": "按课型 id 列表筛选(可选)",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "courseStartTime": {
+                "type": "string",
+                "description": "课程开始时间筛选(可选,格式 yyyy-MM-dd HH:mm:ss)"
+              },
+              "courseEndTime": {
+                "type": "string",
+                "description": "课程结束时间筛选(可选,格式 yyyy-MM-dd HH:mm:ss)"
+              },
+              "teachGroupIds": {
+                "type": "array",
+                "description": "按教研组 id 列表筛选(可选)",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "teachPlanId": {
+                "type": "string",
+                "description": "教学计划 id(可选,传了会覆盖 courseStartTime/courseEndTime 为该计划的时间范围)"
+              }
+            },
+            "required": [
+              "page",
+              "pageSize",
+              "schoolId",
+              "campusId"
+            ]
+          },
+          "responseSchema": {
+            "type": "object",
+            "description": "listKey=courseList;字段扁平(课程视角),投影示例 --jq '.courseList[] | {teacher: .teacherName, course: .name, time: .time, node: .nodeDisplayName, tag: .courseTagName, score: .commentScore}'",
+            "properties": {
+              "pagination": {
+                "type": "object",
+                "description": "分页信息,allCount=命中总数(不受 pageSize 影响)",
+                "properties": {
+                  "allCount": {
+                    "type": "integer"
+                  },
+                  "page": {
+                    "type": "integer"
+                  },
+                  "pageSize": {
+                    "type": "integer"
+                  },
+                  "allPage": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "courseList": {
+                "type": "array",
+                "description": "我讲的课列表",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "courseInfoId": {
+                      "type": "string",
+                      "description": "课程id"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "课程名称"
+                    },
+                    "teacherId": {
+                      "type": "string",
+                      "description": "授课老师id"
+                    },
+                    "teacherName": {
+                      "type": "string",
+                      "description": "授课老师名称"
+                    },
+                    "time": {
+                      "type": "string",
+                      "description": "授课时间"
+                    },
+                    "node": {
+                      "type": "integer",
+                      "description": "授课节次(数字)"
+                    },
+                    "nodeDisplayName": {
+                      "type": "string",
+                      "description": "节次显示名(如\"第三节\")"
+                    },
+                    "courseTagName": {
+                      "type": "string",
+                      "description": "课型名称"
+                    },
+                    "className": {
+                      "type": "string",
+                      "description": "授课班级"
+                    },
+                    "addr": {
+                      "type": "string",
+                      "description": "授课地址"
+                    },
+                    "teachGroupId": {
+                      "type": "string"
+                    },
+                    "teachGroupName": {
+                      "type": "string"
+                    },
+                    "commentScore": {
+                      "type": "integer",
+                      "description": "评课打分"
+                    },
+                    "listenTeacherNum": {
+                      "type": "integer",
+                      "description": "已评课教师数"
+                    },
+                    "fromType": {
+                      "type": "string",
+                      "description": "来源 personal|个人 invite|我发起的邀请 invite_other|别人帮我发起"
+                    },
+                    "listenType": {
+                      "type": "string",
+                      "description": "听课方式 select|选人 appointment|预约 other|其他"
+                    },
+                    "gmtCreated": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "groupmanage",
+      "title": "教研组管理",
+      "basePath": "/lesson",
+      "methods": {
+        "member_get_lists": {
+          "name": "member_get_lists",
+          "path": "/v1/groupmanage/member_get_lists",
+          "httpMethod": "POST",
+          "description": "查询教研组成员(可按姓名模糊查)",
+          "risk": "read",
+          "requiresAuth": true,
+          "requestSchema": {
+            "type": "object",
+            "properties": {
+              "schoolId": {
+                "type": "string",
+                "description": "学校id"
+              },
+              "campusId": {
+                "type": "string",
+                "description": "校区id"
+              },
+              "staffNameDim": {
+                "type": "string",
+                "description": "员工姓名模糊查询"
+              },
+              "teachGroupId": {
+                "type": "string",
+                "description": "教研组id(可选,精确查某组)"
+              },
+              "includeOtherCampus": {
+                "type": "boolean",
+                "description": "是否包含其他校区"
+              },
+              "searchApplySubject": {
+                "type": "boolean",
+                "description": "同时按学科查"
+              },
+              "groupType": {
+                "type": "string",
+                "description": "已废弃,service 强制 teach"
+              }
+            },
+            "required": [
+              "schoolId",
+              "campusId"
+            ]
+          },
+          "responseSchema": {
+            "type": "object",
+            "properties": {
+              "teachGroupList": {
+                "type": "array",
+                "description": "教研组列表(用户在多个组时返回多个)",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "teachGroupId": {
+                      "type": "string",
+                      "description": "教研组id"
+                    },
+                    "teachGroupName": {
+                      "type": "string",
+                      "description": "教研组名称"
+                    },
+                    "saasCampusId": {
+                      "type": "string"
+                    },
+                    "saasCampusName": {
+                      "type": "string"
+                    },
+                    "saasSchoolPhaseCode": {
+                      "type": "string",
+                      "description": "学段code"
+                    },
+                    "saasSchoolPhaseName": {
+                      "type": "string",
+                      "description": "学段名"
+                    },
+                    "staffList": {
+                      "type": "array",
+                      "description": "成员列表",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "staffId": {
+                            "type": "string",
+                            "description": "用户id"
+                          },
+                          "staffName": {
+                            "type": "string",
+                            "description": "用户名"
+                          },
+                          "mobile": {
+                            "type": "string",
+                            "description": "电话"
+                          },
+                          "isMe": {
+                            "type": "boolean",
+                            "description": "是否当前用户"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "allStaffList": {
+                "type": "array",
+                "description": "全部成员扁平列表",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "staffId": {
+                      "type": "string"
+                    },
+                    "staffName": {
+                      "type": "string"
+                    },
+                    "mobile": {
+                      "type": "string"
+                    },
+                    "isMe": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "listen",
+      "title": "听评课记录",
+      "basePath": "/listen",
+      "methods": {
+        "pending_get_lists": {
+          "name": "pending_get_lists",
+          "path": "/v1/course/listen/record/pending_get_lists",
+          "httpMethod": "POST",
+          "description": "查我的待评课清单(分页待办)",
+          "risk": "read",
+          "requiresAuth": true,
+          "requestSchema": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer",
+                "description": "页码,从 1 开始"
+              },
+              "pageSize": {
+                "type": "integer",
+                "description": "每页条数"
+              },
+              "schoolId": {
+                "type": "string",
+                "description": "学校 id"
+              },
+              "campusId": {
+                "type": "string",
+                "description": "校区 id"
+              },
+              "teachPlanId": {
+                "type": "string",
+                "description": "教学计划 id(待评课清单非必填)"
+              },
+              "teachGroupId": {
+                "type": "string",
+                "description": "教研组 id(待评课清单非必填)"
+              }
+            },
+            "required": [
+              "page",
+              "pageSize",
+              "schoolId",
+              "campusId"
+            ]
+          },
+          "responseSchema": {
+            "type": "object",
+            "description": "listKey=pendingList;字段扁平,投影示例 --jq '.pendingList[] | {teacher: .teacherName, course: .name, time: .time, node: .nodeDisplayName, tag: .courseTagName, from: .fromType}'",
+            "properties": {
+              "pagination": {
+                "type": "object",
+                "description": "分页信息,allCount=命中总数",
+                "properties": {
+                  "allCount": {
+                    "type": "integer"
+                  },
+                  "page": {
+                    "type": "integer"
+                  },
+                  "pageSize": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "pendingList": {
+                "type": "array",
+                "description": "待评课清单",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "courseInfoId": {
+                      "type": "string",
+                      "description": "课程id"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "课程名称"
+                    },
+                    "teacherName": {
+                      "type": "string",
+                      "description": "授课老师名称"
+                    },
+                    "time": {
+                      "type": "string",
+                      "description": "授课时间"
+                    },
+                    "node": {
+                      "type": "integer",
+                      "description": "授课节次"
+                    },
+                    "nodeDisplayName": {
+                      "type": "string",
+                      "description": "节次显示名"
+                    },
+                    "courseTagName": {
+                      "type": "string",
+                      "description": "课型名称"
+                    },
+                    "fromType": {
+                      "type": "string",
+                      "description": "来源 personal|个人 invite|邀请 invite_other|别人的邀请"
+                    },
+                    "inviteName": {
+                      "type": "string",
+                      "description": "邀请人姓名"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "listen_get_lists": {
+          "name": "listen_get_lists",
+          "path": "/v1/course/listen/record/listen_get_lists",
+          "httpMethod": "POST",
+          "description": "查我听的课(我作为评课人的评课记录,强制按当前用户过滤,分页)",
+          "risk": "read",
+          "requiresAuth": true,
+          "requestSchema": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer",
+                "description": "页码,从 1 开始"
+              },
+              "pageSize": {
+                "type": "integer",
+                "description": "每页条数"
+              },
+              "schoolId": {
+                "type": "string",
+                "description": "学校 id"
+              },
+              "campusId": {
+                "type": "string",
+                "description": "校区 id"
+              },
+              "courseInfoTeacherName": {
+                "type": "string",
+                "description": "按授课老师(被评人)姓名筛选(可选)"
+              },
+              "courseTagIdList": {
+                "type": "array",
+                "description": "按课型 id 列表筛选(可选)",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "courseStartTime": {
+                "type": "string",
+                "description": "课程开始时间筛选(可选,格式 yyyy-MM-dd HH:mm:ss)"
+              },
+              "courseEndTime": {
+                "type": "string",
+                "description": "课程结束时间筛选(可选,格式 yyyy-MM-dd HH:mm:ss)"
+              },
+              "courseInfoId": {
+                "type": "string",
+                "description": "按单个课程 id 查(可选)"
+              },
+              "courseInfoIdList": {
+                "type": "array",
+                "description": "按多个课程 id 查(可选)",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "leaderEvaluateType": {
+                "type": "string",
+                "description": "评课身份筛选(可选,值 'leader' 表示只看非普通身份的评课,如领导/专家)"
+              },
+              "recordStartTime": {
+                "type": "string",
+                "description": "评课记录提交时间-开始(可选,格式 yyyy-MM-dd HH:mm:ss)"
+              },
+              "recordEndTime": {
+                "type": "string",
+                "description": "评课记录提交时间-结束(可选,格式 yyyy-MM-dd HH:mm:ss)"
+              }
+            },
+            "required": [
+              "page",
+              "pageSize",
+              "schoolId",
+              "campusId"
+            ]
+          },
+          "responseSchema": {
+            "type": "object",
+            "description": "listKey=listenList;授课信息嵌在 courseInfo 子对象下(评课记录视角),投影示例 --jq '.listenList[] | {teacher: .courseInfo.teacherName, course: .courseInfo.name, time: .courseInfo.time, node: .courseInfo.nodeDisplayName, tag: .courseInfo.courseTagName, score: .commentScore, from: .fromType}'",
+            "properties": {
+              "pagination": {
+                "type": "object",
+                "description": "分页信息,allCount=命中总数(不受 pageSize 影响)",
+                "properties": {
+                  "allCount": {
+                    "type": "integer"
+                  },
+                  "page": {
+                    "type": "integer"
+                  },
+                  "pageSize": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "listenList": {
+                "type": "array",
+                "description": "我听的课列表(评课记录)",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "listenRecordId": {
+                      "type": "string",
+                      "description": "评课记录id"
+                    },
+                    "courseInfoId": {
+                      "type": "string",
+                      "description": "课程id"
+                    },
+                    "courseInfo": {
+                      "type": "object",
+                      "description": "授课信息(嵌套,jq 路径 .courseInfo.xxx)",
+                      "properties": {
+                        "courseInfoId": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "课程名称"
+                        },
+                        "teacherId": {
+                          "type": "string"
+                        },
+                        "teacherName": {
+                          "type": "string",
+                          "description": "授课老师名称"
+                        },
+                        "time": {
+                          "type": "string",
+                          "description": "授课时间"
+                        },
+                        "node": {
+                          "type": "integer"
+                        },
+                        "nodeDisplayName": {
+                          "type": "string",
+                          "description": "节次显示名"
+                        },
+                        "courseTagName": {
+                          "type": "string",
+                          "description": "课型名称"
+                        },
+                        "courseTagId": {
+                          "type": "string"
+                        },
+                        "className": {
+                          "type": "string"
+                        },
+                        "addr": {
+                          "type": "string"
+                        },
+                        "teachGroupId": {
+                          "type": "string"
+                        },
+                        "teachGroupName": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "teachGroupId": {
+                      "type": "string"
+                    },
+                    "teachGroupName": {
+                      "type": "string"
+                    },
+                    "gmtCreated": {
+                      "type": "string",
+                      "description": "评课时间"
+                    },
+                    "commentScore": {
+                      "type": "string",
+                      "description": "我的打分"
+                    },
+                    "fromType": {
+                      "type": "string",
+                      "description": "来源 personal|个人 invite|邀请"
+                    },
+                    "inviteName": {
+                      "type": "string",
+                      "description": "邀请人姓名"
+                    },
+                    "creator": {
+                      "type": "string",
+                      "description": "评价人"
+                    },
+                    "commentLevel": {
+                      "type": "string",
+                      "description": "评课等级"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "saas",
+      "title": "saas 登录",
+      "basePath": "/lesson",
+      "methods": {
+        "login": {
+          "name": "login",
+          "path": "/v1/saas/login",
+          "httpMethod": "POST",
+          "description": "用 saas 凭证换 hrToken(staffId/tenantId/schoolId/authorization)",
+          "risk": "write",
+          "requiresAuth": false,
+          "authHeader": "Authorization",
+          "requestSchema": {
+            "type": "object",
+            "properties": {
+              "authorization": {
+                "type": "string",
+                "description": "saas token(从 SAAS_AUTH env)"
+              },
+              "staffId": {
+                "type": "string",
+                "description": "saas 员工 id"
+              },
+              "tenantId": {
+                "type": "string",
+                "description": "saas 租户 id"
+              },
+              "schoolId": {
+                "type": "string",
+                "description": "saas 学校 id"
+              },
+              "campusId": {
+                "type": "string",
+                "description": "校区 id(可选)"
+              }
+            },
+            "required": [
+              "authorization",
+              "staffId",
+              "tenantId",
+              "schoolId"
+            ]
+          },
+          "responseSchema": {
+            "type": "object",
+            "description": "LoginRespDto:hrToken + 用户信息",
+            "properties": {
+              "hrToken": {
+                "type": "string",
+                "description": "hr 系统 JWT,后续调 listen API 用"
+              },
+              "hrUserInfo": {
+                "type": "object",
+                "properties": {
+                  "accountName": {
+                    "type": "string"
+                  },
+                  "staffId": {
+                    "type": "string"
+                  },
+                  "userId": {
+                    "type": "string"
+                  },
+                  "tenantId": {
+                    "type": "string"
+                  },
+                  "schoolId": {
+                    "type": "string"
+                  },
+                  "schoolName": {
+                    "type": "string"
+                  },
+                  "campusId": {
+                    "type": "string"
+                  },
+                  "campusName": {
+                    "type": "string"
+                  },
+                  "phone": {
+                    "type": "string"
+                  },
+                  "avatar": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "app_school_campus_get_lists": {
+          "name": "app_school_campus_get_lists",
+          "path": "/v1/saas/app_school_campus_get_lists",
+          "httpMethod": "POST",
+          "description": "用 userId 查用户可访问的学校校区列表(用户可能跨多学校)",
+          "risk": "read",
+          "requiresAuth": false,
+          "authHeader": "Authorization",
+          "requestSchema": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string",
+                "description": "saas 用户 id(注意:是 userId 不是 staffId)"
+              },
+              "saasAppId": {
+                "type": "string",
+                "description": "应用 id(可选,默认后端配置)"
+              },
+              "source": {
+                "type": "string",
+                "description": "来源标识(可选)"
+              }
+            },
+            "required": [
+              "userId"
+            ]
+          },
+          "responseSchema": {
+            "type": "object",
+            "description": "listKey=schools;用户可能跨多学校,直接调时用 --jq 投影。示例:--jq '{total: (.schools|length), items: [.schools[] | {school: .schoolName, staffId, tenantId, campuses: [.campus[] | .campusName]}]}'",
+            "properties": {
+              "schools": {
+                "type": "array",
+                "description": "学校列表(按学校分组,每个学校含校区)",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "schoolId": {
+                      "type": "string"
+                    },
+                    "schoolName": {
+                      "type": "string"
+                    },
+                    "staffId": {
+                      "type": "string",
+                      "description": "该用户在此学校的 staffId"
+                    },
+                    "tenantId": {
+                      "type": "string"
+                    },
+                    "campus": {
+                      "type": "array",
+                      "description": "校区列表",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "campusId": {
+                            "type": "string"
+                          },
+                          "campusName": {
+                            "type": "string"
+                          },
+                          "isAdmin": {
+                            "type": "boolean"
+                          },
+                          "hasJoinTeachGroup": {
+                            "type": "boolean"
+                          },
+                          "recentLogin": {
+                            "type": "boolean",
+                            "description": "是否最近登录"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "schoolCampus": {
+                "type": "array",
+                "description": "扁平化的学校校区列表",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "schoolId": {
+                      "type": "string"
+                    },
+                    "schoolName": {
+                      "type": "string"
+                    },
+                    "staffId": {
+                      "type": "string"
+                    },
+                    "tenantId": {
+                      "type": "string"
+                    },
+                    "campusId": {
+                      "type": "string"
+                    },
+                    "campusName": {
+                      "type": "string"
+                    },
+                    "recentLogin": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
