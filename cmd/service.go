@@ -90,6 +90,6 @@ func runMethod(svc *registry.Service, mtd *registry.Method, cmd *cobra.Command) 
 		return nil
 	}
 
-	o := output.NewOutput(os.Stdout, globalFlagValues.format, globalFlagValues.jq)
+	o := output.NewOutput(os.Stdout, globalFlagValues.format, globalFlagValues.jq, globalFlagValues.agent)
 	return o.Write(result.Raw)
 }

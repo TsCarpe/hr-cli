@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"os"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -19,11 +19,12 @@ import (
 // Login 是 saas +login shortcut。
 //
 // 流程(混合调用):
-//   步骤1: net/http 裸调 saas-auth tokenAuth → 拿 userId + accountName
-//   步骤2: runMethod("saas","app_school_campus_get_lists") → 拿 schools[]
-//   步骤3: 用户选择学校/校区(多个时列出)
-//   步骤4: 框架自动调 runMethod("saas","login", body) ← BuildBody 返回 login body
-//   步骤5: After 里 SaveToken + 输出
+//
+//	步骤1: net/http 裸调 saas-auth tokenAuth → 拿 userId + accountName
+//	步骤2: runMethod("saas","app_school_campus_get_lists") → 拿 schools[]
+//	步骤3: 用户选择学校/校区(多个时列出)
+//	步骤4: 框架自动调 runMethod("saas","login", body) ← BuildBody 返回 login body
+//	步骤5: After 里 SaveToken + 输出
 //
 // 注意:BuildBody 里调 rt.runMethod 是合法的(调不同 method,不会递归 BuildBody)。
 var Login = common.Shortcut{
@@ -237,7 +238,7 @@ func selectSchoolCampus(rt *common.RuntimeContext, data map[string]any) (schoolI
 			return
 		}
 		var idx int
-		idx, err = promptSelect(fmt.Sprintf("选择 %s 的校区", s.Name), campusItems(s.Campuses))
+		idx, err = promptSelect(fmt.Sprintf("选择 %s 的校区", s.Name), campusItems(s.Campuses), campusInternalJSON(s.Campuses))
 		if err != nil {
 			return
 		}
@@ -251,7 +252,7 @@ func selectSchoolCampus(rt *common.RuntimeContext, data map[string]any) (schoolI
 		items[i] = fmt.Sprintf("%s(校区 %d 个)", s.Name, len(s.Campuses))
 	}
 	var sIdx int
-	sIdx, err = promptSelect("学校", items)
+	sIdx, err = promptSelect("学校", items, schoolInternalJSON(schools))
 	if err != nil {
 		return
 	}
@@ -266,7 +267,7 @@ func selectSchoolCampus(rt *common.RuntimeContext, data map[string]any) (schoolI
 	}
 
 	var cIdx int
-	cIdx, err = promptSelect(fmt.Sprintf("选择 %s 的校区", s.Name), campusItems(s.Campuses))
+	cIdx, err = promptSelect(fmt.Sprintf("选择 %s 的校区", s.Name), campusItems(s.Campuses), campusInternalJSON(s.Campuses))
 	if err != nil {
 		return
 	}
@@ -282,9 +283,37 @@ func campusItems(cs []campusInfo) []string {
 	return items
 }
 
+// campusInternalJSON 把每个校区序列化成 JSON 对象字符串,供 [internal] 区使用。
+func campusInternalJSON(cs []campusInfo) []string {
+	out := make([]string, len(cs))
+	for i, c := range cs {
+		b, _ := json.Marshal(map[string]string{"campusId": c.ID, "campusName": c.Name})
+		out[i] = string(b)
+	}
+	return out
+}
+
+// schoolInternalJSON 把每个学校序列化成 JSON 对象字符串,供 [internal] 区使用。
+func schoolInternalJSON(ss []schoolInfo) []string {
+	out := make([]string, len(ss))
+	for i, s := range ss {
+		b, _ := json.Marshal(map[string]string{
+			"schoolId":   s.ID,
+			"schoolName": s.Name,
+			"staffId":    s.StaffID,
+			"tenantId":   s.TenantID,
+		})
+		out[i] = string(b)
+	}
+	return out
+}
+
 // promptSelect 把候选项列成编号让用户选,返回选中的下标。
 // 单候选项时直接返回 0(不读 stdin)。
-func promptSelect(label string, items []string) (int, error) {
+// 友好区打名字(items);[internal] 区输出 JSON 数组(internalJSON 每项是
+// 调用方序列化好的对象字符串),对齐 groupmanage +search-teacher 的范式,
+// 供 AI agent 后续按用户选的序号直接反查到 ID。
+func promptSelect(label string, items []string, internalJSON []string) (int, error) {
 	if len(items) == 1 {
 		return 0, nil
 	}
@@ -293,9 +322,21 @@ func promptSelect(label string, items []string) (int, error) {
 		fmt.Printf("  %d. %s\n", i+1, it)
 	}
 	fmt.Print("\n[internal]\n")
-	for i, it := range items {
-		fmt.Printf("%d. %s\n", i+1, it)
+	// 扁平结构:{"index":N,"label":"...","schoolId":...,...}。
+	// - 扁平而非嵌套:对齐 groupmanage +search-teacher 的范式,AI 写 jq 更短。
+	// - index 必备:AI 按"用户选 3"直接定位到数组第 3 项。
+	// - label 留着:让 AI 能校验选中的是哪个中文名,防错配。
+	// - 字段驼峰:与后端 API + groupmanage 一致。
+	out := make([]map[string]any, len(items))
+	for i := range items {
+		var obj map[string]any
+		_ = json.Unmarshal([]byte(internalJSON[i]), &obj)
+		obj["index"] = i + 1
+		obj["label"] = items[i]
+		out[i] = obj
 	}
+	b, _ := json.Marshal(out)
+	fmt.Println(string(b))
 	fmt.Print("\n回复序号: ")
 
 	reader := bufio.NewReader(os.Stdin)

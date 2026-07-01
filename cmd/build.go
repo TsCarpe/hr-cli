@@ -18,6 +18,7 @@ func buildCmdTree(root *cobra.Command) {
 		return runner.Options{
 			BaseURL: config.ResolveBaseURL(globalFlagValues.baseURL),
 			Token:   globalFlagValues.token,
+			Compact: globalFlagValues.agent,
 		}
 	})
 
@@ -28,4 +29,8 @@ func buildCmdTree(root *cobra.Command) {
 
 	// 添加 schema 命令
 	root.AddCommand(NewCmdSchema())
+
+	// 环境自检 + 意图发现
+	root.AddCommand(NewCmdDoctor())
+	root.AddCommand(NewCmdWhich())
 }

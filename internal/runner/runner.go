@@ -109,6 +109,7 @@ type Options struct {
 	DryRun  bool
 	BaseURL string
 	Token   string
+	Compact bool // --agent 联动:shortcuts 层据此开 compact 输出
 }
 
 type Result struct {

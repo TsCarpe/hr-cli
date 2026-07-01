@@ -35,8 +35,9 @@ make clean
 ### Step 1: 检查登录态(每次会话开始时 MUST 先做)
 
 ```bash
-hr-cli saas +login --dry-run 2>&1 | head -3
-# 或直接看配置文件:~/.hr-cli/config.json 是否存在且 hrToken 非空
+hr-cli doctor                       # 推荐:一次自检配置/token/连通性/schoolId
+                                    # exit 0 = 全就绪;exit 1 = 有 FAIL,按提示修
+hr-cli --agent doctor               # AI 消费场景:输出结构化 JSON
 ```
 
 - 若已登录(配置文件存在且非空)→ 继续处理用户请求
@@ -64,6 +65,8 @@ hr-cli saas +login --dry-run 2>&1 | head -3
 hr-cli schema                      # 列所有 service
 hr-cli schema course               # 列 course 的 method
 hr-cli schema course.add           # 看 add 参数结构
+hr-cli which 邀课                  # 按意图关键词找命令(同义词友好,如"查教师"/"建课")
+hr-cli doctor                      # 环境自检:配置/token/连通性/schoolId(FAIL → exit 1)
 
 # service 命令(原始 API,1:1 映射 REST)
 hr-cli course add --data '{...}'
@@ -77,6 +80,11 @@ hr-cli course add --data '{...}' --dry-run
 # 列表查询 + --jq 投影(列表接口几乎必用,详见 hr-shared 的「列表查询 SOP」)
 hr-cli listen listen_get_lists --data '{...}' \
   --jq '{total: .pagination.allCount, items: [.listenList[] | {teacher: .courseInfo.teacherName, score: .commentScore}]}'
+
+# --agent: AI agent 模式信号,强制 compact JSON(无缩进);doctor/which 在 agent 模式下输出结构化 JSON
+hr-cli --agent schema course
+hr-cli --agent doctor
+hr-cli --agent which 邀课
 
 # 测试环境
 hr-cli --base-url "https://hrjy-test.hailiangedu.com/hr" --token "eyJ..." course add ...

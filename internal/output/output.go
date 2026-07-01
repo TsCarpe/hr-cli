@@ -9,13 +9,16 @@ import (
 )
 
 type Output struct {
-	writer io.Writer
-	format string
-	jq     string
+	writer  io.Writer
+	format  string
+	jq      string
+	compact bool
 }
 
-func NewOutput(w io.Writer, format, jq string) *Output {
-	return &Output{writer: w, format: format, jq: jq}
+// NewOutput 创建输出器。
+// compact=true 时 JSON 紧凑输出(无缩进),供 --agent / AI 消费。
+func NewOutput(w io.Writer, format, jq string, compact bool) *Output {
+	return &Output{writer: w, format: format, jq: jq, compact: compact}
 }
 
 func (o *Output) Write(data any) error {
@@ -33,10 +36,18 @@ func (o *Output) writeJSON(data any) error {
 	if o.jq != "" {
 		return o.applyJQ(data)
 	}
-	encoder := json.NewEncoder(o.writer)
-	encoder.SetIndent("", "  ")
-	encoder.SetEscapeHTML(false)
-	return encoder.Encode(data)
+	return o.encode(data, true)
+}
+
+// encode 序列化单个值。singleTop=true 时遵循 compact 设置(顶层美化),
+// 否则强制紧凑(NDJSON 多结果分支)。
+func (o *Output) encode(data any, singleTop bool) error {
+	enc := json.NewEncoder(o.writer)
+	if singleTop && !o.compact {
+		enc.SetIndent("", "  ")
+	}
+	enc.SetEscapeHTML(false)
+	return enc.Encode(data)
 }
 
 // applyJQ 对 data 跑 jq 表达式,把结果序列化输出。
@@ -75,15 +86,11 @@ func (o *Output) applyJQ(data any) error {
 	case 0:
 		return nil
 	case 1:
-		enc := json.NewEncoder(o.writer)
-		enc.SetIndent("", "  ")
-		enc.SetEscapeHTML(false)
-		return enc.Encode(results[0])
+		return o.encode(results[0], true)
 	default:
-		enc := json.NewEncoder(o.writer)
-		enc.SetEscapeHTML(false)
+		// 多结果始终 NDJSON 风格(每行紧凑),不受 compact 影响
 		for _, r := range results {
-			if err := enc.Encode(r); err != nil {
+			if err := o.encode(r, false); err != nil {
 				return err
 			}
 		}

@@ -16,6 +16,7 @@ type globalFlags struct {
 	format  string
 	baseURL string
 	jq      string
+	agent   bool
 }
 
 func registerGlobalFlags(root *cobra.Command, gf *globalFlags) {
@@ -26,4 +27,7 @@ func registerGlobalFlags(root *cobra.Command, gf *globalFlags) {
 	root.PersistentFlags().StringVar(&gf.baseURL, "base-url", "", "listen 服务地址,优先级: --base-url > HR_CLI_BASE_URL env > .hr-cli.json > "+config.DefaultBaseURL)
 	root.PersistentFlags().StringVar(&gf.format, "format", "json", "输出格式: json | table")
 	root.PersistentFlags().StringVar(&gf.jq, "jq", "", "jq 表达式,过滤 JSON 输出")
+	// --agent: AI agent 模式信号。当前仅联动 compact JSON 输出;
+	// 后续可扩展(无色、非交互默认值)。一个 flag 替代记多个。
+	root.PersistentFlags().BoolVar(&gf.agent, "agent", false, "AI agent 模式:强制 compact JSON 输出(无缩进)")
 }

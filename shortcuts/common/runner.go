@@ -55,7 +55,7 @@ func runShortcut(sc *Shortcut, cmd *cobra.Command, opts runner.Options) error {
 		runMethod: func(service, method string, body map[string]any) (*runner.Result, error) {
 			return runner.RunMethod(service, method, body, opts)
 		},
-		output: output.NewOutput(cmd.OutOrStdout(), "", ""),
+		output: output.NewOutput(cmd.OutOrStdout(), "", "", opts.Compact),
 	}
 
 	// 3. BuildBody
