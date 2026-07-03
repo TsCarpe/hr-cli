@@ -12,8 +12,15 @@
 
 ## 前置条件
 
+saas token 二选一(**优先 A**):
+
+**A. 推荐 — haiclaw 配置文件(无需手动操作)**
+- 已用 haiclaw CLI 登录,token 自动持久化到 `~/.haiclaw/saas-config.json`(`saasToken` 字段)
+- `hr-cli saas +login` 自动读取
+
+**B. 降级 — 环境变量(无 haiclaw 时)**
 ```bash
-# 用户必须先 export saas token(从 saas 系统 UI 的 Authorization header 拿)
+# 从 saas 系统 UI 的 Authorization header 拿
 export SAAS_AUTH="xxx"
 ```
 
@@ -136,9 +143,9 @@ export LISTEN_TOKEN="eyJ..."
 
 | Error 消息 | 原因 | 解决 |
 |-----------|------|------|
-| `未设置 SAAS_AUTH 环境变量` | 没 export | `export SAAS_AUTH=xxx` |
+| `未找到 saas token` | haiclaw 配置不存在且 SAAS_AUTH env 未设置 | 用 haiclaw 登录,或 `export SAAS_AUTH=xxx` |
 | `tokenAuth 请求失败` | saas-auth 服务不通 | 确认 `--saas-url`,测试环境默认值 |
-| `tokenAuth 失败(status=xxx)` | SAAS_AUTH 过期/无效 | 重新从 saas 系统拿 |
+| `tokenAuth 失败(status=xxx)` | saas token 过期/无效 | 重新用 haiclaw 登录刷新,或重新从 saas 系统拿 |
 | `解析 tokenAuth 响应失败` | saas-auth 返回结构异常 | 看原始响应排查 |
 | `未找到任何学校` | 用户无学校权限 | 联系管理员 |
 | `校区 X 不在学校 Y 内` | `--campus-id` 和 `--school-id` 不匹配 | 检查 ID |

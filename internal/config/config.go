@@ -44,9 +44,35 @@ func ResolveToken(flagToken string) string {
 	return ""
 }
 
-// ResolveSaasAuth 读 SAAS_AUTH env(saas 登录用)
+// ResolveSaasAuth 解析 saas 登录用 token。
+// 优先级:~/.haiclaw/saas-config.json 的 saasToken > SAAS_AUTH env(降级)。
 func ResolveSaasAuth() string {
+	if t := readHaiclawSaasToken(); t != "" {
+		return t
+	}
 	return os.Getenv("SAAS_AUTH")
+}
+
+// readHaiclawSaasToken 读 ~/.haiclaw/saas-config.json 的 saasToken 字段。
+// 文件不存在 / 解析失败 / 字段空 → 返回空串(让上层降级到 env)。
+// 静默降级不打 log:此函数高频调用(internal/runner 每个 Authorization 请求都走)。
+func readHaiclawSaasToken() string {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return ""
+	}
+	path := filepath.Join(home, ".haiclaw", "saas-config.json")
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return ""
+	}
+	var cfg struct {
+		SaasToken string `json:"saasToken"`
+	}
+	if err := json.Unmarshal(data, &cfg); err != nil {
+		return ""
+	}
+	return cfg.SaasToken
 }
 
 // ProjectConfig 项目级配置(部署相关,跟用户身份分离)。

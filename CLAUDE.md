@@ -44,7 +44,7 @@ hr-cli --agent doctor               # AI 消费场景:输出结构化 JSON
 - 若未登录或 401 → **MUST 先引导用户完成登录**(详见 [`skills/hr-auth/SKILL.md`](skills/hr-auth/SKILL.md)):
   ```
   你需要先登录。请执行:
-  1. export SAAS_AUTH="<从 saas 系统 UI 拿的 Authorization>"
+  1. 确认 `~/.haiclaw/saas-config.json` 存在(由 haiclaw 工具生成);若无,降级:`export SAAS_AUTH="<从 saas 系统 UI 拿的 Authorization>"`
   2. hr-cli saas +login
   ```
   **登录是前置门槛,未登录前不处理任何业务请求。**

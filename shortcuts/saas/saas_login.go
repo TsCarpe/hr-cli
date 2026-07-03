@@ -105,10 +105,10 @@ func tokenAuth(ctx context.Context, saasURL, authorization string) (userID, acco
 }
 
 func buildBody(ctx context.Context, rt *common.RuntimeContext) (map[string]any, error) {
-	// 步骤1: 读 SAAS_AUTH env
+	// 步骤1: 读 saas token(优先 ~/.haiclaw/saas-config.json,降级 SAAS_AUTH env)
 	authorization := config.ResolveSaasAuth()
 	if authorization == "" {
-		return nil, fmt.Errorf("未设置 SAAS_AUTH 环境变量,请先 export SAAS_AUTH=<saas token>")
+		return nil, fmt.Errorf("未找到 saas token:请先用 haiclaw 工具登录生成 ~/.haiclaw/saas-config.json,或 export SAAS_AUTH=<saas token> 作为降级")
 	}
 
 	saasURL := rt.Str("saas-url")
