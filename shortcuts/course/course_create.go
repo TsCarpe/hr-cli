@@ -3,7 +3,7 @@ package course
 import (
 	"context"
 	"fmt"
-	"hr-cli/shortcuts/common"
+	"github.com/TsCarpe/hr-cli/shortcuts/common"
 	"strconv"
 	"strings"
 )

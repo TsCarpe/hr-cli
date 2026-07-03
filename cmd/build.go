@@ -3,9 +3,9 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"hr-cli/internal/config"
-	"hr-cli/internal/runner"
-	"hr-cli/shortcuts"
+	"github.com/TsCarpe/hr-cli/internal/config"
+	"github.com/TsCarpe/hr-cli/internal/runner"
+	"github.com/TsCarpe/hr-cli/shortcuts"
 )
 
 // buildCmdTree 把所有子命令挂到 root 上。

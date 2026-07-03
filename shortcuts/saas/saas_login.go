@@ -12,8 +12,8 @@ import (
 	"strings"
 	"time"
 
-	"hr-cli/internal/config"
-	"hr-cli/shortcuts/common"
+	"github.com/TsCarpe/hr-cli/internal/config"
+	"github.com/TsCarpe/hr-cli/shortcuts/common"
 )
 
 // Login 是 saas +login shortcut。

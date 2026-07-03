@@ -7,8 +7,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"hr-cli/internal/config"
-	"hr-cli/internal/runner"
+	"github.com/TsCarpe/hr-cli/internal/config"
+	"github.com/TsCarpe/hr-cli/internal/runner"
 )
 
 // NewCmdDoctor 环境自检命令。

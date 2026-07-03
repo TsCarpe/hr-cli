@@ -2,8 +2,8 @@ package common
 
 import (
 	"context"
-	"hr-cli/internal/output"
-	"hr-cli/internal/runner"
+	"github.com/TsCarpe/hr-cli/internal/output"
+	"github.com/TsCarpe/hr-cli/internal/runner"
 )
 
 type Shortcut struct {

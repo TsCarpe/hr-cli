@@ -3,11 +3,11 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/TsCarpe/hr-cli/internal/config"
+	"github.com/TsCarpe/hr-cli/internal/output"
+	"github.com/TsCarpe/hr-cli/internal/registry"
+	"github.com/TsCarpe/hr-cli/internal/runner"
 	"github.com/spf13/cobra"
-	"hr-cli/internal/config"
-	"hr-cli/internal/output"
-	"hr-cli/internal/registry"
-	"hr-cli/internal/runner"
 	"os"
 )
 

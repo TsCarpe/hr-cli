@@ -1,7 +1,7 @@
 package main
 
 import (
-	"hr-cli/cmd"
+	"github.com/TsCarpe/hr-cli/cmd"
 	"os"
 )
 

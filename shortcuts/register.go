@@ -3,11 +3,11 @@ package shortcuts
 import (
 	"github.com/spf13/cobra"
 
-	"hr-cli/internal/runner"
-	"hr-cli/shortcuts/common"
-	"hr-cli/shortcuts/course"
-	"hr-cli/shortcuts/groupmanage"
-	"hr-cli/shortcuts/saas"
+	"github.com/TsCarpe/hr-cli/internal/runner"
+	"github.com/TsCarpe/hr-cli/shortcuts/common"
+	"github.com/TsCarpe/hr-cli/shortcuts/course"
+	"github.com/TsCarpe/hr-cli/shortcuts/groupmanage"
+	"github.com/TsCarpe/hr-cli/shortcuts/saas"
 )
 
 // All 返回所有已注册的 shortcut。

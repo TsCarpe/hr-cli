@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"hr-cli/shortcuts/common"
+	"github.com/TsCarpe/hr-cli/shortcuts/common"
 )
 
 // SearchTeacher 按姓名模糊查询教研组教师。

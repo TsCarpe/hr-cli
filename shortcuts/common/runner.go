@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"hr-cli/internal/output"
-	"hr-cli/internal/runner"
+	"github.com/TsCarpe/hr-cli/internal/output"
+	"github.com/TsCarpe/hr-cli/internal/runner"
 )
 
 // NewCmdShortcut 把一个 Shortcut 注册成 cobra 命令。

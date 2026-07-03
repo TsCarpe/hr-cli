@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/TsCarpe/hr-cli/internal/registry"
 	"github.com/spf13/cobra"
-	"hr-cli/internal/registry"
 	"sort"
 	"strings"
 )

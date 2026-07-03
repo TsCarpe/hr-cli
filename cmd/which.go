@@ -8,8 +8,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"hr-cli/internal/registry"
-	"hr-cli/shortcuts"
+	"github.com/TsCarpe/hr-cli/internal/registry"
+	"github.com/TsCarpe/hr-cli/shortcuts"
 )
 
 // NewCmdWhich 意图发现命令。按关键词模糊搜索,同时返回 shortcut 和 service.method。

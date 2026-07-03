@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"hr-cli/internal/config"
+	"github.com/TsCarpe/hr-cli/internal/config"
 )
 
 // globalFlags 容纳所有全局 flag 的值。

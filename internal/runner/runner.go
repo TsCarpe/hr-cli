@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"hr-cli/internal/client"
-	"hr-cli/internal/config"
-	"hr-cli/internal/registry"
+	"github.com/TsCarpe/hr-cli/internal/client"
+	"github.com/TsCarpe/hr-cli/internal/config"
+	"github.com/TsCarpe/hr-cli/internal/registry"
 )
 
 func RunMethod(svcName, mtdName string, body map[string]any, opts Options) (*Result, error) {

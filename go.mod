@@ -1,4 +1,4 @@
-module hr-cli
+module github.com/TsCarpe/hr-cli
 
 go 1.24.0
 
