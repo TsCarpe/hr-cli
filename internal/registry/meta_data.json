@@ -1081,7 +1081,7 @@
             "properties": {
               "authorization": {
                 "type": "string",
-                "description": "saas token(从 SAAS_AUTH env)"
+                "description": "saas token(由 haiclaw 工具生成,持久化在 ~/.haiclaw/saas-config.json)"
               },
               "staffId": {
                 "type": "string",

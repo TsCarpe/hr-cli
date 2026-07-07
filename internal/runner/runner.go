@@ -35,7 +35,7 @@ func RunMethod(svcName, mtdName string, body map[string]any, opts Options) (*Res
 	fullPath := svc.BasePath + mtd.Path
 
 	// 按 method 元数据的 authHeader 决定 token 来源:
-	// - "Authorization"(saas 接口)→ 读 SAAS_AUTH env
+	// - "Authorization"(saas 接口)→ 读 ~/.haiclaw/saas-config.json(haiclaw 工具生成)
 	// - 其他/空(默认 hrToken)→ 走 ResolveToken(flag > env > config)
 	authHeader := mtd.AuthHeader
 	var token string

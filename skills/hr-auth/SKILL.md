@@ -1,7 +1,7 @@
 ---
 name: hr-auth
 version: 0.1.0
-description: "saas 登录与 hrToken 持久化。系统前置门槛:未登录任何接口都 401。saas token 优先从 ~/.haiclaw/saas-config.json 读取(由 haiclaw 工具生成),也可降级 export SAAS_AUTH;一条命令自动登录,后续所有命令免传 --token。"
+description: "saas 登录与 hrToken 持久化。系统前置门槛:未登录任何接口都 401。saas token 从 ~/.haiclaw/saas-config.json 读取(由 haiclaw 工具生成);一条命令自动登录,后续所有命令免传 --token。"
 ---
 
 # hr-auth(saas 登录)
@@ -32,16 +32,14 @@ description: "saas 登录与 hrToken 持久化。系统前置门槛:未登录任
 ## 核心命令:`saas +login`
 
 ```bash
-# 前置(二选一):
-# A. 推荐:已用 haiclaw 工具登录,~/.haiclaw/saas-config.json 自动就位
-# B. 降级:export SAAS_AUTH="xxx"(从 saas 系统 UI 拿 Authorization)
+# 前置:已用 haiclaw 工具登录,~/.haiclaw/saas-config.json 自动就位
 
 # 一条命令全自动登录
 hr-cli saas +login
 ```
 
 **自动流程**(用户不感知):
-1. 用 SAAS_AUTH 调 saas-auth 服务换 userId
+1. 用 saas token 调 saas-auth 服务换 userId
 2. 用 userId 查用户可访问的学校/校区
 3. 单学校单校区自动用;多学校/多校区列出让用户选
 4. 用选中的身份调 lesson login 换 hrToken
@@ -60,18 +58,13 @@ hrToken 已保存到 ~/.hr-cli/config.json,后续命令自动使用
 
 ## 前置条件:saas token 怎么拿
 
-`saas token`(代码里叫 `SAAS_AUTH`,底层 saas 服务签发,不是 hrToken)的两种来源,**优先 A**:
+`saas token`(底层 saas 服务签发,不是 hrToken)的唯一来源:
 
-**A. 推荐:haiclaw 工具(自动)**
-- 用 haiclaw CLI 登录一次,token 持久化到 `~/.haiclaw/saas-config.json`
+**haiclaw 工具(自动)**
+- 用 haiclaw CLI 登录一次,token 持久化到 `~/.haiclaw/saas-config.json`(`saasToken` 字段)
 - `hr-cli saas +login` 自动读取,无需任何手动操作
 
-**B. 降级:环境变量(无 haiclaw 时)**
-- 登录 saas 系统的 web 界面
-- 浏览器 devtools → Network → 任意请求的 `Authorization` header 复制
-- `export SAAS_AUTH="复制的值"`
-
-**CRITICAL — 不要向用户展示完整 saas token**。引导用户用 haiclaw 或自己 export。
+**CRITICAL — 不要向用户展示完整 saas token**。引导用户用 haiclaw 登录即可。
 
 ## 选学校/校区的交互
 
@@ -99,7 +92,7 @@ hrToken 已保存到 ~/.hr-cli/config.json,后续命令自动使用
 
 ## 边界
 
-- ✅ **支持**:saas token 双来源(haiclaw 配置文件优先 / SAAS_AUTH env 降级)+ 多学校选择 + 持久化复用
+- ✅ **支持**:saas token 来源唯一(haiclaw 配置文件)+ 多学校选择 + 持久化复用
 - ✅ **支持**:测试环境开箱即用(内置 saas-auth URL)
 - ⚠️ **限制**:生产环境需用户传 `--saas-url`(本期不内置生产 URL)
 - ❌ **不支持**:账号密码登录(lesson 有 `account_login` 但本期不做)
@@ -109,8 +102,8 @@ hrToken 已保存到 ~/.hr-cli/config.json,后续命令自动使用
 
 | 错误 | 原因 | 解决 |
 |------|------|------|
-| `未找到 saas token` | haiclaw 配置不存在且 SAAS_AUTH env 未设置 | 引导用户用 haiclaw 登录,或 `export SAAS_AUTH=xxx` |
-| `tokenAuth 失败` | saas token 过期或无效 | 重新用 haiclaw 登录刷新,或重新从 saas 系统拿 |
+| `未找到 saas token` | haiclaw 配置不存在 | 引导用户用 haiclaw 登录,生成 `~/.haiclaw/saas-config.json` |
+| `tokenAuth 失败` | saas token 过期或无效 | 重新用 haiclaw 登录刷新 |
 | `未找到任何学校` | 用户无学校权限 | 联系管理员分配学校 |
 | `多学校选择逻辑未实现` | 用了旧版二进制 | 重新 `make build` |
 | 网络错误 | saas-auth 服务不通 | 确认 `--saas-url`,测试环境 `http://10.30.5.53:31759` |
@@ -131,7 +124,7 @@ Claude(内部检查):~/.hr-cli/config.json 存在且 hrToken 非空?
   ├─ 是 → 继续,读 hr-invite/SKILL.md 处理
   └─ 否 → MUST 暂停,引导登录:
        你需要先登录才能创建邀课。请执行:
-       1. 确认已用 haiclaw 工具登录(生成 ~/.haiclaw/saas-config.json);若无,降级:`export SAAS_AUTH="<从 saas 系统 UI 拿的 Authorization>"`
+       1. 确认已用 haiclaw 工具登录(生成 ~/.haiclaw/saas-config.json)
        2. hr-cli saas +login
        登录成功后告诉我,我继续帮你创建。
 ```
@@ -139,7 +132,7 @@ Claude(内部检查):~/.hr-cli/config.json 存在且 hrToken 非空?
 **禁止**:
 - ❌ 未登录时尝试调任何业务接口(必然 401,浪费调用)
 - ❌ 让用户从浏览器 devtools 手动复制 hrToken(有自动登录,不要走弯路)
-- ❌ 在对话里展示完整 saas token(SAAS_AUTH)或 hrToken
+- ❌ 在对话里展示完整 saas token 或 hrToken
 
 **鼓励**:
 - ✅ 主动检查 ~/.hr-cli/config.json 判断登录态

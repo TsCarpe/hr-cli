@@ -31,7 +31,7 @@ var Login = common.Shortcut{
 	Service:     "saas",
 	Command:     "+login",
 	Method:      "login",
-	Description: "saas 登录(SAAS_AUTH env → 自动换 hrToken 并持久化)",
+	Description: "saas 登录(haiclaw saas token → 自动换 hrToken 并持久化)",
 	Risk:        "write",
 	Flags: []common.Flag{
 		{Name: "saas-url", Desc: "saas-auth 服务地址", Default: "http://10.30.5.53:31759"},
@@ -105,10 +105,10 @@ func tokenAuth(ctx context.Context, saasURL, authorization string) (userID, acco
 }
 
 func buildBody(ctx context.Context, rt *common.RuntimeContext) (map[string]any, error) {
-	// 步骤1: 读 saas token(优先 ~/.haiclaw/saas-config.json,降级 SAAS_AUTH env)
+	// 步骤1: 读 saas token(来源:~/.haiclaw/saas-config.json,由 haiclaw 工具生成)
 	authorization := config.ResolveSaasAuth()
 	if authorization == "" {
-		return nil, fmt.Errorf("未找到 saas token:请先用 haiclaw 工具登录生成 ~/.haiclaw/saas-config.json,或 export SAAS_AUTH=<saas token> 作为降级")
+		return nil, fmt.Errorf("未找到 saas token:请先用 haiclaw 工具登录生成 ~/.haiclaw/saas-config.json")
 	}
 
 	saasURL := rt.Str("saas-url")

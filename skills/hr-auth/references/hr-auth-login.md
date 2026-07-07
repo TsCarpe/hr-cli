@@ -1,6 +1,6 @@
 # saas +login
 
-用 SAAS_AUTH 自动换 hrToken,持久化到 `~/.hr-cli/config.json`,后续命令免传 `--token`。
+用 haiclaw saas token 自动换 hrToken,持久化到 `~/.hr-cli/config.json`,后续命令免传 `--token`。
 
 **开始前 MUST 读 [`../SKILL.md`](../SKILL.md) 和 [`../../hr-shared/SKILL.md`](../../hr-shared/SKILL.md)。**
 
@@ -12,17 +12,11 @@
 
 ## 前置条件
 
-saas token 二选一(**优先 A**):
+saas token 的唯一来源:
 
-**A. 推荐 — haiclaw 配置文件(无需手动操作)**
+**haiclaw 配置文件**
 - 已用 haiclaw CLI 登录,token 自动持久化到 `~/.haiclaw/saas-config.json`(`saasToken` 字段)
 - `hr-cli saas +login` 自动读取
-
-**B. 降级 — 环境变量(无 haiclaw 时)**
-```bash
-# 从 saas 系统 UI 的 Authorization header 拿
-export SAAS_AUTH="xxx"
-```
 
 ## Flags
 
@@ -55,21 +49,21 @@ hr-cli saas +login --saas-url "https://生产环境-saas-auth地址"
 ## 内部链路(三步)
 
 ```
-SAAS_AUTH env
+~/.haiclaw/saas-config.json 的 saasToken
     ↓ 步骤1: net/http 裸调 saas-auth(不走元数据,返回 CommonResult)
     POST ${SAAS_URL}/saas-auth/sso/channel/token/auth
-    body: {"token": "<SAAS_AUTH>"}
+    body: {"token": "<saasToken>"}
     → 拿 userId + accountName
     ↓ 步骤2: 走元数据调 lesson
     POST ${BASE_URL}/lesson/v1/saas/app_school_campus_get_lists
-    header: Authorization: <SAAS_AUTH>
+    header: Authorization: <saasToken>
     body: {"userId": "<userId>", "saasAppId": "6874934855898312704"}
     → 拿 schools[] + campus[]
     ↓ 用户选择(多学校时)
     ↓ 步骤3: 走元数据调 lesson
     POST ${BASE_URL}/lesson/v1/saas/login
-    header: Authorization: <SAAS_AUTH>
-    body: {staffId, tenantId, schoolId, campusId, authorization: <SAAS_AUTH>}
+    header: Authorization: <saasToken>
+    body: {staffId, tenantId, schoolId, campusId, authorization: <saasToken>}
     → 拿 hrToken
     ↓ 持久化
     写入 ~/.hr-cli/config.json (权限 0600)
@@ -143,9 +137,9 @@ export LISTEN_TOKEN="eyJ..."
 
 | Error 消息 | 原因 | 解决 |
 |-----------|------|------|
-| `未找到 saas token` | haiclaw 配置不存在且 SAAS_AUTH env 未设置 | 用 haiclaw 登录,或 `export SAAS_AUTH=xxx` |
+| `未找到 saas token` | haiclaw 配置不存在 | 用 haiclaw 登录,生成 `~/.haiclaw/saas-config.json` |
 | `tokenAuth 请求失败` | saas-auth 服务不通 | 确认 `--saas-url`,测试环境默认值 |
-| `tokenAuth 失败(status=xxx)` | saas token 过期/无效 | 重新用 haiclaw 登录刷新,或重新从 saas 系统拿 |
+| `tokenAuth 失败(status=xxx)` | saas token 过期/无效 | 重新用 haiclaw 登录刷新 |
 | `解析 tokenAuth 响应失败` | saas-auth 返回结构异常 | 看原始响应排查 |
 | `未找到任何学校` | 用户无学校权限 | 联系管理员 |
 | `校区 X 不在学校 Y 内` | `--campus-id` 和 `--school-id` 不匹配 | 检查 ID |

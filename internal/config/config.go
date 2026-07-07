@@ -45,17 +45,14 @@ func ResolveToken(flagToken string) string {
 }
 
 // ResolveSaasAuth 解析 saas 登录用 token。
-// 优先级:~/.haiclaw/saas-config.json 的 saasToken > SAAS_AUTH env(降级)。
+// 仅来源:~/.haiclaw/saas-config.json 的 saasToken(由 haiclaw 工具生成)。
 func ResolveSaasAuth() string {
-	if t := readHaiclawSaasToken(); t != "" {
-		return t
-	}
-	return os.Getenv("SAAS_AUTH")
+	return readHaiclawSaasToken()
 }
 
 // readHaiclawSaasToken 读 ~/.haiclaw/saas-config.json 的 saasToken 字段。
-// 文件不存在 / 解析失败 / 字段空 → 返回空串(让上层降级到 env)。
-// 静默降级不打 log:此函数高频调用(internal/runner 每个 Authorization 请求都走)。
+// 文件不存在 / 解析失败 / 字段空 → 返回空串。
+// 静默不打 log:此函数高频调用(internal/runner 每个 Authorization 请求都走)。
 func readHaiclawSaasToken() string {
 	home, err := os.UserHomeDir()
 	if err != nil {

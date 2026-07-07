@@ -48,10 +48,9 @@ go install github.com/TsCarpe/hr-cli@latest
 
 ### 2. 登录(必须,未登录调用业务接口会 401)
 
-saas token 自动从 `~/.haiclaw/saas-config.json` 读取(由 [haiclaw](https://github.com/TsCarpe/haiclaw) 工具生成);若无此文件,可降级用环境变量:
+saas token 自动从 `~/.haiclaw/saas-config.json` 读取(由 [haiclaw](https://github.com/TsCarpe/haiclaw) 工具生成):
 
 ```bash
-export SAAS_AUTH="<从 saas 系统 UI 抓到的 Authorization>"
 hr-cli saas +login
 ```
 

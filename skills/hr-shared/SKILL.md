@@ -71,7 +71,7 @@ hr-cli schema <service[.method]>    # schema 查询(看参数结构)
 
 ```
 你需要先登录才能使用本系统。请执行:
-1. export SAAS_AUTH="<从 saas 系统 UI 拿的 Authorization header>"
+1. 确认已用 haiclaw 工具登录(生成 ~/.haiclaw/saas-config.json)
 2. hr-cli saas +login
 登录成功后我再帮你处理 [用户原请求]。
 ```
@@ -129,10 +129,9 @@ hr-cli schema <service[.method]>    # schema 查询(看参数结构)
 **CRITICAL — 用户需要 token 时,优先推荐自动登录,不要让用户手动复制。**
 
 ```bash
-# 1. 用户先 export saas token(从 saas 系统 UI 拿,一次性)
-export SAAS_AUTH="xxx"
+# 前置:已用 haiclaw 工具登录,~/.haiclaw/saas-config.json 自动就位
 
-# 2. 一条命令自动换 hrToken 并持久化到 ~/.hr-cli/config.json
+# 一条命令自动换 hrToken 并持久化到 ~/.hr-cli/config.json
 hr-cli saas +login
 # 之后所有命令自动读 config.json,无需再传 --token
 ```
@@ -141,7 +140,7 @@ hr-cli saas +login
 
 ### token 安全
 
-- **禁止**在对话里向用户展示完整 token(hrToken 或 SAAS_AUTH 都不能展示)
+- **禁止**在对话里向用户展示完整 token(hrToken 或 saas token 都不能展示)
 - **禁止**把 token 写进日志或返回给用户
 - 引导用户自己设置:`export LISTEN_TOKEN="xxx"` 或 `--token "xxx"`
 - `saas +login` 成功后**只展示账号名/学校名**,不展示 hrToken 本身(已持久化)
