@@ -32,6 +32,17 @@ make clean
 
 **CRITICAL — 系统必须登录后才能使用,任何 listen API 调用都要 hrToken,不传会 401。**
 
+### Step 0: 确认 hr-cli 可调用(开始前 MUST 先做)
+
+Agent 子进程常是非交互 shell,可能不读 `~/.zshrc`,导致 `which hr-cli` 返回空即使已 `go install`:
+
+```bash
+which hr-cli || ls ~/go/bin/hr-cli
+# which 成功 → 直接用
+# which 失败但 ls 成功 → PATH 缺失,用绝对路径 ~/go/bin/hr-cli 调用
+# 两者失败 → 引导用户:go install github.com/TsCarpe/hr-cli@latest
+```
+
 ### Step 1: 检查登录态(每次会话开始时 MUST 先做)
 
 ```bash
